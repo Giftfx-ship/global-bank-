@@ -31,11 +31,30 @@ exports.handler = async (event) => {
       }
     });
 
+    // Generate a unique message ID
+    const messageId = `<${Date.now()}.${Math.random().toString(36).substring(2, 15)}@primeheritage.com>`;
+
     const info = await transporter.sendMail({
-      from: process.env.EMAIL_FROM || 'Prime Heritage Bank <no-reply@primeheritage.com>',
+      from: process.env.EMAIL_FROM || '"Prime Heritage Bank" <no-reply@primeheritage.com>',
       to: to,
       subject: subject || 'Message from Prime Heritage Bank',
-      html: html || ''
+      html: html || '',
+      // ✅ Plain text version (helps avoid spam)
+      text: html ? html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim() : '',
+      messageId: messageId,
+      // ✅ HEADERS TO AVOID SPAM
+      headers: {
+        'List-Unsubscribe': `<mailto:${process.env.EMAIL_USER || 'primeheritageinternationalbank@gmail.com'}?subject=unsubscribe>`,
+        'X-Mailer': 'Prime Heritage Bank Mail System',
+        'X-Entity-Ref-ID': Date.now().toString(),
+        'X-Priority': '1',
+        'X-MSMail-Priority': 'High',
+        'X-Auto-Response-Suppress': 'OOF, AutoReply',
+        'X-No-Spam': 'true',
+        'Precedence': 'bulk'
+      },
+      // ✅ Priority headers
+      priority: 'high'
     });
 
     return {
