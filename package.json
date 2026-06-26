@@ -1,8 +1,8 @@
-[functions]
-  directory = "netlify/functions"
-  node_bundler = "esbuild"
-
-[[redirects]]
-  from = "/api/email/*"
-  to = "/.netlify/functions/send-email"
-  status = 200
+{
+  "name": "prime-heritage-email-function",
+  "version": "1.0.0",
+  "description": "Netlify email function for Prime Heritage Bank",
+  "dependencies": {
+    "nodemailer": "^6.9.7"
+  }
+}
